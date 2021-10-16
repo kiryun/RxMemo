@@ -6,8 +6,14 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-
-class MemoListViewModel{
+class MemoListViewModel: CommonViewModel{
+    // table view 와 바인딩할 속성을 추가
+    var memoList: Observable<[Memo]>{
+        return self.storage.memoList()
+    }
+    
     
 }
