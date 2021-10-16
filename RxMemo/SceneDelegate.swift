@@ -17,6 +17,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        
+        let storage = MemoryStorage()
+        let coordinator = SceneCoordinator(window: window!)
+        let listViewModel = MemoListViewModel(title: "나의 메모", sceneCoordinator: coordinator, storage: storage)
+        // scene 열거형에 선언되어 있는 list scene을 생성, viewmodel을 연관값으로 전달
+        let listScene: Scene = Scene.list(listViewModel)
+        
+        // coordintor에서 transition을 호출 하고 listScene 을 root로 설정
+        coordinator.transition(to: listScene, using: .root, animated: false)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
