@@ -9,6 +9,14 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+extension UIViewController{
+    // 실제로 화면에 표시되고 있는 ViewController를 리턴해주는 속성을 추가 해준다.
+    var sceneViewController: UIViewController{
+        // navigation controller와 같은 컨테이너 viewcontroller라면 마지막 child를 리턴하고 나머지 경우에는 self를 그대로 리턴하고 있다.
+        // 지금은 navigation controller만 고려했지만, tab bar controller나 다른 컨테이터 controller를 사용한다면 거기에 맞게 수정해줘야 함.
+        return self.children.first ?? self
+    }
+}
 
 class SceneCoordinator: SceneCoordinatorType{
     
@@ -36,20 +44,32 @@ class SceneCoordinator: SceneCoordinatorType{
         switch style{
         case .root:
             // root인 경우는 그냥 rootViewConroller를 바꿔 주면 됨
-            self.currentVC = target
-            window.rootViewController = target
+            self.currentVC = target.sceneViewController
+            self.window.rootViewController = target
             // 마지막으로 completed 이벤트 발생
             subject.onCompleted()
             
         case .push:
+            print(self.currentVC)
             // push는 navigation controller에 임베드되어 있을 때만 의미가 있음.
-            guard let nav = currentVC.navigationController else{
+            guard let nav = self.currentVC.navigationController else{
                 subject.onError(TransitionError.navigationControllerMissing)
                 break
             }
             
+            // willShow는 델리게이트 메서드가 호출되는 시점 마다 next 이벤트를 방출하는 컨트롤 이벤트이다.
+            // 여기에 구독자를 추가하고 currentVC속성을 업데이트한다.
+            nav.rx.willShow
+                .subscribe({ evt in
+                    if let element = evt.element{
+                        self.currentVC = element.viewController.sceneViewController
+                    }
+                })
+                .disposed(by: bag)
+
+            
             nav.pushViewController(target, animated: animated)
-            self.currentVC = target
+            self.currentVC = target.sceneViewController
             
             subject.onCompleted()
             
@@ -58,7 +78,7 @@ class SceneCoordinator: SceneCoordinatorType{
                 subject.onCompleted()
             }
         
-            self.currentVC = target
+            self.currentVC = target.sceneViewController
         }
         
         // https://hyunsikwon.github.io/swift/Swift-RxSwift-02/
@@ -73,7 +93,7 @@ class SceneCoordinator: SceneCoordinatorType{
             // view controller가 modal 방식으로 표시되어 있다면 현재 scene을 dismiss
             if let presentingVC = self.currentVC.presentingViewController{
                 self.currentVC.dismiss(animated: animated) {
-                    self.currentVC = presentingVC
+                    self.currentVC = presentingVC.sceneViewController
                     completable(.completed)
                 }
             }else if let nav = self.currentVC.navigationController{

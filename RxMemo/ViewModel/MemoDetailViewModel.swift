@@ -44,4 +44,11 @@ class MemoDetailViewModel: CommonViewModel{
         
         super.init(title: title, sceneCoordinator: sceneCoordinator, storage: storage)
     }
+    
+    // 뒤로가기 버튼(나의 메모 버튼) 과 바인딩할 Action 추가
+    lazy var popAction = CocoaAction{ [unowned self] in
+        // Action 내부에서는 sceneCoordinator에 있는 close 메서드를 호출
+        return self.sceneCoordinator.close(animated: true).asObservable().map{ _ in }
+        
+    }
 }
