@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class MemoDetailViewController: UIViewController, ViewModelBindableType {
 
@@ -54,5 +56,18 @@ class MemoDetailViewController: UIViewController, ViewModelBindableType {
         
         // editButton의 액션에 view model의 makeEditAction 과 바인딩해 준다.
         self.editButton.rx.action = self.viewModel.makeEditAction()
+        
+        // 더블 탭 방지
+        // 구독자 추가
+        self.sharebutton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .subscribe { [weak self] _ in
+                guard let memo = self?.viewModel.memo.content else { return }
+                
+                let vc = UIActivityViewController(activityItems: [memo], applicationActivities: nil)
+                self?.present(vc, animated: true, completion: nil)
+            }
+            .disposed(by: rx.disposeBag)
+
     }
 }
