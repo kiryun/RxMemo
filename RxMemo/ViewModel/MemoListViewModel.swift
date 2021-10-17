@@ -79,6 +79,13 @@ class MemoListViewModel: CommonViewModel{
         }
     }()
     
+    // 삭제 기능
+    lazy var deleteAction: Action<Memo, Swift.Never> = {
+        // 메모를 삭제하는 기능만 구현하면 된다. 이전으로 돌아가는 액션은 필요없음
+        return Action{ memo in
+            return self.storage.delete(memo: memo).ignoreElements()
+        }
+    }()
     
     
 }

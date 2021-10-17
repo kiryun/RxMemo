@@ -57,6 +57,10 @@ class MemoDetailViewController: UIViewController, ViewModelBindableType {
         // editButton의 액션에 view model의 makeEditAction 과 바인딩해 준다.
         self.editButton.rx.action = self.viewModel.makeEditAction()
         
+        // 삭제 버튼과 삭제 액션을 바인딩
+        self.deleteButton.rx.action = self.viewModel.makeDeleteAction()
+        
+        // 공유 버튼 바인딩
         // 더블 탭 방지
         // 구독자 추가
         self.sharebutton.rx.tap

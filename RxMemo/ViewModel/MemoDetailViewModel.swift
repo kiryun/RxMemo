@@ -90,4 +90,15 @@ class MemoDetailViewModel: CommonViewModel{
             }
         }
     }
+    
+    // 삭제 버튼과 바인딩할 액션을 구현
+    func makeDeleteAction() -> CocoaAction{
+        // 메모를 삭제한 다음 이전화면으로 돌아간다.
+        return Action { input in
+            self.storage.delete(memo: self.memo)
+            return self.sceneCoordinator.close(animated: true).asObservable().map{ _ in
+                
+            }
+        }
+    }
 }
