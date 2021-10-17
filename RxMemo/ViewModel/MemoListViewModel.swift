@@ -5,14 +5,34 @@
 //  Created by Gihyun Kim on 2021/10/15.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 import RxCocoa
 import Action
+import RxDataSources
+
+// 우리가 사용할 섹션 모델: 섹션데이터 타입은 Int, 로우데이터 타입은 Memo
+typealias MemoSectionModel = AnimatableSectionModel<Int, Memo>
 
 class MemoListViewModel: CommonViewModel{
+    
+    // table view 바인딩에 사용할 dataSource를 선언
+    let dataSource: RxTableViewSectionedAnimatedDataSource<MemoSectionModel> = {
+        //
+        let ds = RxTableViewSectionedAnimatedDataSource<MemoSectionModel>(configureCell: { (dataSource, tableView, indexPath, memo) -> UITableViewCell in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+            cell.textLabel?.text = memo.content
+            
+            return cell
+        })
+        
+        ds.canEditRowAtIndexPath = { _, _ in return true }
+        return ds
+    }()
+    
+    
     // table view 와 바인딩할 속성을 추가
-    var memoList: Observable<[Memo]>{
+    var memoList: Observable<[MemoSectionModel]>{
         return self.storage.memoList()
     }
     

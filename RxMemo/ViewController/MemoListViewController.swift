@@ -35,11 +35,7 @@ class MemoListViewController: UIViewController, ViewModelBindableType {
         // 메모 목록을 table view에 바인딩
         // observable과 tableview를 바인딩
         self.viewModel.memoList
-            .bind(to: self.listTableView.rx.items(cellIdentifier: "cell")){ row, memo, cell in
-                // datasource 구현 없이 이렇게 짧은 코드로 table view의 데이터를 표시 할 수 있음.
-                // closure에서 cell구성만 구현해주면 된다.
-                cell.textLabel?.text = memo.content
-            }
+            .bind(to: self.listTableView.rx.items(dataSource: self.viewModel.dataSource))
             .disposed(by: rx.disposeBag)
         
         // addButton과 action을 바인딩한다.

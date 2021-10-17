@@ -6,8 +6,11 @@
 //
 
 import Foundation
+// RxDataSources는 table view와 collection view의 바인딩할 수 잇는 데이터 소스를 제공한다.
+import RxDataSources
 
-struct Memo: Equatable{
+// DataSource에 저장되는 모든 데이터는 반드시 IdentifiableType을 채용해야함.
+struct Memo: Equatable, IdentifiableType{
     var content: String
     var insertDate: Date
     var identity: String
