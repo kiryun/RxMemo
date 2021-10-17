@@ -60,7 +60,7 @@ class SceneCoordinator: SceneCoordinatorType{
             // willShow는 델리게이트 메서드가 호출되는 시점 마다 next 이벤트를 방출하는 컨트롤 이벤트이다.
             // 여기에 구독자를 추가하고 currentVC속성을 업데이트한다.
             nav.rx.willShow
-                .subscribe({ evt in
+                .subscribe({ [unowned self] evt in
                     if let element = evt.element{
                         self.currentVC = element.viewController.sceneViewController
                     }

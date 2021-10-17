@@ -51,5 +51,8 @@ class MemoDetailViewController: UIViewController, ViewModelBindableType {
                 }
             }
             .disposed(by: rx.disposeBag)
+        
+        // editButton의 액션에 view model의 makeEditAction 과 바인딩해 준다.
+        self.editButton.rx.action = self.viewModel.makeEditAction()
     }
 }
